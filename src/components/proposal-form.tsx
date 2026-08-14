@@ -98,7 +98,7 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
         },
       );
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao gerar prévia 3D");
+      toast.error(err instanceof Error ? err.message : "Não foi possível gerar prévia do modelo 3D");
     } finally {
       setGenerating(false);
     }
@@ -109,8 +109,8 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
       const selected = PROSTHESIS_MODELS.find((m) => m.id === selectedModel);
       const purposeText = [
         values.purpose,
-        selected ? `[Modelo escolhido: ${selected.name}]` : null,
-        include3D ? "[Modelagem 3D personalizada incluída]" : null,
+        selected ? `[Protese escolhida: ${selected.name}]` : null,
+        include3D ? "[Modelagem 3D personalizada escolhida incluída]" : null,
       ]
         .filter(Boolean)
         .join(" ");
