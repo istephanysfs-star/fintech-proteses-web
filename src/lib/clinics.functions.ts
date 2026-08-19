@@ -53,15 +53,12 @@ export const getClinicByUser = createServerFn({ method: "GET" })
       throw new Error(affiliationsError.message);
     }
 
-    const clinicIds = affiliations?.map((a) => a.clinic_id) ?? [];
+    const clinicIds = affiliations?.map((a: { clinic_id: string }) => a.clinic_id) ?? [];
     if (clinicIds.length === 0) {
       return { clinics: [] };
     }
 
-    const { data, error } = await context.supabase
-      .from("clinics")
-      .select("*")
-      .in("id", clinicIds);
+    const { data, error } = await context.supabase.from("clinics").select("*").in("id", clinicIds);
 
     if (error) {
       throw new Error(error.message);
@@ -72,7 +69,7 @@ export const getClinicByUser = createServerFn({ method: "GET" })
 
 export const registerClinic = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data) => registerClinicSchema.parse(data))
+  .validator((data: unknown) => registerClinicSchema.parse(data))
   .handler(async ({ data, context }) => {
     const { data: clinic, error } = await context.supabase
       .from("clinics")
