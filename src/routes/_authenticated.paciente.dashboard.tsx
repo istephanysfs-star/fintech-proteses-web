@@ -38,7 +38,7 @@ function PatientDashboard() {
       <main className="flex-1 px-4 py-12">
         <div className="mx-auto max-w-5xl">
           <h1 className="text-3xl font-bold text-foreground">Painel do Paciente</h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-2 text-sm">
             Acompanhe o status das suas propostas de financiamento.
           </p>
 
@@ -79,14 +79,14 @@ function PatientDashboard() {
             </Card>
           </div>
 
-          <div className="mt-6 grid gap-8 lg:grid-cols-2">
+          <div className="mt-8 grid gap-8 lg:grid-cols-2">
             <div>
               <h2 className="text-xl font-semibold text-foreground">Nova proposta</h2>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-sm text-sm text-muted-foreground">
                 Ajuste o valor e envie uma nova proposta de financiamento.
               </p>
-              <Card className="mt-4">
-                <CardContent className="p-6">
+              <Card className="mt-9">
+                <CardContent className="p-8">
                   <ProposalForm
                     onSuccess={() =>
                       queryClient.invalidateQueries({ queryKey: ["my-loan-applications"] })
@@ -98,9 +98,9 @@ function PatientDashboard() {
             <div>
               <h2 className="text-xl font-semibold text-foreground">Minhas propostas</h2>
               {isLoading ? (
-                <p className="mt-4 text-muted-foreground">Carregando...</p>
+                <p className="mt-4 text-sm">Carregando...</p>
               ) : applications.length === 0 ? (
-                <p className="mt-4 text-muted-foreground">
+                <p className="mt-4 text-sm">
                   Você ainda não tem propostas. Simule e solicite uma.
                 </p>
               ) : (
