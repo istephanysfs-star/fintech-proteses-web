@@ -68,7 +68,7 @@ function PatientDashboard() {
             </Card>
           </div>
 
-          <div className="mt-12 grid gap-8 lg:grid-cols-2">
+          <div className="mt-6 grid gap-8 lg:grid-cols-2">
             <div>
               <h2 className="text-xl font-semibold text-foreground">Nova proposta</h2>
               <p className="mt-2 text-sm text-muted-foreground">Ajuste o valor e envie uma nova proposta de financiamento.</p>
