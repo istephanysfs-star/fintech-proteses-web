@@ -99,7 +99,7 @@ function ClinicasParceirasPage() {
               Seja uma clínica parceira
             </h1>
             <p className="mt-4 text-muted-foreground">
-              Ofereça financiamento para próteses ortopédicas e aumente a conversão de tratamentos.
+              Ofereça financiamento para próteses e aumente a conversão de tratamentos.
             </p>
           </div>
 
