@@ -13,13 +13,20 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SimularRouteImport } from './routes/simular'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as ClinicasParceirasRouteImport } from './routes/clinicas-parceiras'
+import { Route as CadastroClinicaRouteImport } from './routes/cadastro-clinica'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as ApiGenerateImagePreviewRouteImport } from './routes/api/generate-image-preview'
 import { Route as ApiGenerate3dPreviewRouteImport } from './routes/api/generate-3d-preview'
+import { Route as ApiGenerate3dModelRouteImport } from './routes/api/generate-3d-model'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedClinicaIndexRouteImport } from './routes/_authenticated.clinica.index'
 import { Route as AuthenticatedPacienteDashboardRouteImport } from './routes/_authenticated.paciente.dashboard'
 import { Route as AuthenticatedClinicaDashboardRouteImport } from './routes/_authenticated.clinica.dashboard'
+import { Route as AuthenticatedAdminSetupRouteImport } from './routes/_authenticated.admin.setup'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated.admin.dashboard'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -42,6 +49,11 @@ const ClinicasParceirasRoute = ClinicasParceirasRouteImport.update({
   path: '/clinicas-parceiras',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CadastroClinicaRoute = CadastroClinicaRouteImport.update({
+  id: '/cadastro-clinica',
+  path: '/cadastro-clinica',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -56,16 +68,42 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
+} as any)
+const ApiGenerateImagePreviewRoute = ApiGenerateImagePreviewRouteImport.update({
+  id: '/api/generate-image-preview',
+  path: '/api/generate-image-preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGenerate3dPreviewRoute = ApiGenerate3dPreviewRouteImport.update({
   id: '/api/generate-3d-preview',
   path: '/api/generate-3d-preview',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGenerate3dModelRoute = ApiGenerate3dModelRouteImport.update({
+  id: '/api/generate-3d-model',
+  path: '/api/generate-3d-model',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedClinicaIndexRoute =
+  AuthenticatedClinicaIndexRouteImport.update({
+    id: '/clinica/',
+    path: '/clinica/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedPacienteDashboardRoute =
   AuthenticatedPacienteDashboardRouteImport.update({
     id: '/paciente/dashboard',
@@ -78,6 +116,11 @@ const AuthenticatedClinicaDashboardRoute =
     path: '/clinica/dashboard',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminSetupRoute = AuthenticatedAdminSetupRouteImport.update({
+  id: '/admin/setup',
+  path: '/admin/setup',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAdminDashboardRoute =
   AuthenticatedAdminDashboardRouteImport.update({
     id: '/admin/dashboard',
@@ -87,97 +130,142 @@ const AuthenticatedAdminDashboardRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/cadastro-clinica': typeof CadastroClinicaRoute
   '/clinicas-parceiras': typeof ClinicasParceirasRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/simular': typeof SimularRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
+  '/api/generate-3d-model': typeof ApiGenerate3dModelRoute
   '/api/generate-3d-preview': typeof ApiGenerate3dPreviewRoute
+  '/api/generate-image-preview': typeof ApiGenerateImagePreviewRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/clinica/dashboard': typeof AuthenticatedClinicaDashboardRoute
   '/paciente/dashboard': typeof AuthenticatedPacienteDashboardRoute
+  '/clinica/': typeof AuthenticatedClinicaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/cadastro-clinica': typeof CadastroClinicaRoute
   '/clinicas-parceiras': typeof ClinicasParceirasRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/simular': typeof SimularRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
+  '/api/generate-3d-model': typeof ApiGenerate3dModelRoute
   '/api/generate-3d-preview': typeof ApiGenerate3dPreviewRoute
+  '/api/generate-image-preview': typeof ApiGenerateImagePreviewRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/clinica/dashboard': typeof AuthenticatedClinicaDashboardRoute
   '/paciente/dashboard': typeof AuthenticatedPacienteDashboardRoute
+  '/clinica': typeof AuthenticatedClinicaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
+  '/cadastro-clinica': typeof CadastroClinicaRoute
   '/clinicas-parceiras': typeof ClinicasParceirasRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/simular': typeof SimularRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/api/generate-3d-model': typeof ApiGenerate3dModelRoute
   '/api/generate-3d-preview': typeof ApiGenerate3dPreviewRoute
+  '/api/generate-image-preview': typeof ApiGenerateImagePreviewRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/setup': typeof AuthenticatedAdminSetupRoute
   '/_authenticated/clinica/dashboard': typeof AuthenticatedClinicaDashboardRoute
   '/_authenticated/paciente/dashboard': typeof AuthenticatedPacienteDashboardRoute
+  '/_authenticated/clinica/': typeof AuthenticatedClinicaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/cadastro-clinica'
     | '/clinicas-parceiras'
     | '/como-funciona'
     | '/simular'
     | '/sitemap.xml'
     | '/dashboard'
+    | '/perfil'
+    | '/api/generate-3d-model'
     | '/api/generate-3d-preview'
+    | '/api/generate-image-preview'
+    | '/auth/reset-password'
     | '/admin/dashboard'
+    | '/admin/setup'
     | '/clinica/dashboard'
     | '/paciente/dashboard'
+    | '/clinica/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/cadastro-clinica'
     | '/clinicas-parceiras'
     | '/como-funciona'
     | '/simular'
     | '/sitemap.xml'
     | '/dashboard'
+    | '/perfil'
+    | '/api/generate-3d-model'
     | '/api/generate-3d-preview'
+    | '/api/generate-image-preview'
+    | '/auth/reset-password'
     | '/admin/dashboard'
+    | '/admin/setup'
     | '/clinica/dashboard'
     | '/paciente/dashboard'
+    | '/clinica'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/cadastro-clinica'
     | '/clinicas-parceiras'
     | '/como-funciona'
     | '/simular'
     | '/sitemap.xml'
     | '/_authenticated/dashboard'
+    | '/_authenticated/perfil'
+    | '/api/generate-3d-model'
     | '/api/generate-3d-preview'
+    | '/api/generate-image-preview'
+    | '/auth/reset-password'
     | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/setup'
     | '/_authenticated/clinica/dashboard'
     | '/_authenticated/paciente/dashboard'
+    | '/_authenticated/clinica/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
+  CadastroClinicaRoute: typeof CadastroClinicaRoute
   ClinicasParceirasRoute: typeof ClinicasParceirasRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   SimularRoute: typeof SimularRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiGenerate3dModelRoute: typeof ApiGenerate3dModelRoute
   ApiGenerate3dPreviewRoute: typeof ApiGenerate3dPreviewRoute
+  ApiGenerateImagePreviewRoute: typeof ApiGenerateImagePreviewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -210,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClinicasParceirasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cadastro-clinica': {
+      id: '/cadastro-clinica'
+      path: '/cadastro-clinica'
+      fullPath: '/cadastro-clinica'
+      preLoaderRoute: typeof CadastroClinicaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -231,6 +326,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/api/generate-image-preview': {
+      id: '/api/generate-image-preview'
+      path: '/api/generate-image-preview'
+      fullPath: '/api/generate-image-preview'
+      preLoaderRoute: typeof ApiGenerateImagePreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/generate-3d-preview': {
       id: '/api/generate-3d-preview'
       path: '/api/generate-3d-preview'
@@ -238,11 +347,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGenerate3dPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/generate-3d-model': {
+      id: '/api/generate-3d-model'
+      path: '/api/generate-3d-model'
+      fullPath: '/api/generate-3d-model'
+      preLoaderRoute: typeof ApiGenerate3dModelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/clinica/': {
+      id: '/_authenticated/clinica/'
+      path: '/clinica'
+      fullPath: '/clinica/'
+      preLoaderRoute: typeof AuthenticatedClinicaIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/paciente/dashboard': {
@@ -259,6 +389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClinicaDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/setup': {
+      id: '/_authenticated/admin/setup'
+      path: '/admin/setup'
+      fullPath: '/admin/setup'
+      preLoaderRoute: typeof AuthenticatedAdminSetupRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/dashboard': {
       id: '/_authenticated/admin/dashboard'
       path: '/admin/dashboard'
@@ -271,31 +408,50 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminSetupRoute: typeof AuthenticatedAdminSetupRoute
   AuthenticatedClinicaDashboardRoute: typeof AuthenticatedClinicaDashboardRoute
   AuthenticatedPacienteDashboardRoute: typeof AuthenticatedPacienteDashboardRoute
+  AuthenticatedClinicaIndexRoute: typeof AuthenticatedClinicaIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminSetupRoute: AuthenticatedAdminSetupRoute,
   AuthenticatedClinicaDashboardRoute: AuthenticatedClinicaDashboardRoute,
   AuthenticatedPacienteDashboardRoute: AuthenticatedPacienteDashboardRoute,
+  AuthenticatedClinicaIndexRoute: AuthenticatedClinicaIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface AuthRouteChildren {
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
+  CadastroClinicaRoute: CadastroClinicaRoute,
   ClinicasParceirasRoute: ClinicasParceirasRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
   SimularRoute: SimularRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiGenerate3dModelRoute: ApiGenerate3dModelRoute,
   ApiGenerate3dPreviewRoute: ApiGenerate3dPreviewRoute,
+  ApiGenerateImagePreviewRoute: ApiGenerateImagePreviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState, useEffect } from "react";
+import { getAuthenticatedUserRole } from "@/lib/auth-client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +23,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ProposalForm } from "@/components/proposal-form";
+import { PatientApplicationExtras } from "@/components/application-extras";
 import { toast } from "sonner";
 import {
   User,
@@ -45,7 +47,7 @@ import {
 export const Route = createFileRoute("/_authenticated/paciente/dashboard")({
   head: () => ({
     meta: [
-      { title: "Painel do Paciente — PrótesePay" },
+      { title: "Painel do Paciente | PrótesePay" },
       {
         name: "description",
         content: "Acompanhe suas propostas de financiamento e dados do perfil integrados ao Supabase.",
@@ -56,6 +58,25 @@ export const Route = createFileRoute("/_authenticated/paciente/dashboard")({
 });
 
 function PatientDashboard() {
+  const router = useRouter();
+  useEffect(() => {
+    let isMounted = true;
+    getAuthenticatedUserRole().then((role) => {
+      if (!isMounted) return;
+      if (role === "clinic") {
+        router.navigate({ to: "/clinica/dashboard", replace: true });
+        return;
+      }
+      if (role === "admin") {
+        router.navigate({ to: "/admin/dashboard", replace: true });
+        return;
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [router]);
+
   const fetchApplications = useServerFn(getMyLoanApplications);
   const fetchProfile = useServerFn(getCurrentUserProfile);
   const updateProfileFn = useServerFn(updateProfile);
@@ -219,7 +240,7 @@ function PatientDashboard() {
             </CardContent>
           </Card>
 
-          {/* Metrics Overview Cards (Calculated directly from Supabase DB) */}
+          {/* Metrics Overview Cards */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card className="border-border">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -526,6 +547,7 @@ function PatientDashboard() {
                                   </div>
                                 )}
                               </CardContent>
+                              <PatientApplicationExtras app={app} />
                             </Card>
                           ))
                         )}

@@ -1,7 +1,7 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 
 export function Header() {
@@ -32,7 +32,7 @@ export function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
         <Link to="/" className="flex items-center gap-2">
           <span className="text-xl font-bold tracking-tight text-foreground">
-            Protese<span className="text-primary">Pay</span>
+            Prótese<span className="text-primary">Pay</span>
           </span>
         </Link>
 
@@ -63,18 +63,19 @@ export function Header() {
         <div className="hidden items-center gap-4 md:flex">
           {user ? (
             <>
-              <Link to="/dashboard">
-                <Button variant="ghost" size="sm">
-                  Meu painel
-                </Button>
+              <Link to="/dashboard" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                Meu painel
+              </Link>
+              <Link to="/perfil" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                Meu perfil
               </Link>
               <Button variant="outline" size="sm" onClick={handleSignOut}>
                 Sair
               </Button>
             </>
           ) : (
-            <Link to="/auth">
-              <Button size="sm">Entrar</Button>
+            <Link to="/auth" className={buttonVariants({ size: "sm" })}>
+              Entrar
             </Link>
           )}
         </div>
@@ -110,7 +111,7 @@ export function Header() {
               className="text-sm font-medium text-muted-foreground"
               onClick={() => setMobileOpen(false)}
             >
-              Como funciona
+              Como funciona?
             </Link>
             <Link
               to="/clinicas-parceiras"
@@ -127,6 +128,13 @@ export function Header() {
                   onClick={() => setMobileOpen(false)}
                 >
                   Meu painel
+                </Link>
+                <Link
+                  to="/perfil"
+                  className="text-sm font-medium text-muted-foreground"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Meu perfil
                 </Link>
                 <button
                   className="text-left text-sm font-medium text-muted-foreground"
