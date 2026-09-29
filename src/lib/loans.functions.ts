@@ -52,7 +52,7 @@ export const getMyLoanApplications = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { data, error } = await context.supabase
       .from("loan_applications")
-      .select("*, clinics(name)")
+      .select("*, clinics(id, name, city, state, phone, email)")
       .eq("patient_id", context.userId)
       .order("created_at", { ascending: false });
 

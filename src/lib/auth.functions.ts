@@ -2,6 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+import type { TablesUpdate } from "@/integrations/supabase/types";
+
 export const getCurrentUserProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -24,7 +26,9 @@ export const getCurrentUserProfile = createServerFn({ method: "GET" })
       throw new Error(rolesError.message);
     }
 
-    return { profile: data, roles: roles?.map((r: { role: string }) => r.role) ?? [] };
+    const email = (context.claims as any)?.email ?? null;
+
+    return { profile: data, email, roles: roles?.map((r: { role: string }) => r.role) ?? [] };
   });
 
 export const updateProfile = createServerFn({ method: "POST" })
@@ -32,20 +36,23 @@ export const updateProfile = createServerFn({ method: "POST" })
   .validator((data: unknown) =>
     z
       .object({
-        fullName: z.string().min(2).optional(),
-        phone: z.string().min(10).max(20).optional(),
+        fullName: z.string().min(2, "Nome deve ter no mínimo 2 caracteres").optional(),
+        phone: z.string().optional(),
         birthDate: z.string().optional(),
+        document: z.string().optional(),
       })
       .parse(data),
   )
   .handler(async ({ data, context }) => {
+    const updateData: TablesUpdate<"profiles"> = {};
+    if (data.fullName !== undefined) updateData.full_name = data.fullName;
+    if (data.phone !== undefined) updateData.phone = data.phone;
+    if (data.birthDate !== undefined) updateData.birth_date = data.birthDate;
+    if (data.document !== undefined) updateData.document = data.document;
+
     const { error } = await context.supabase
       .from("profiles")
-      .update({
-        full_name: data.fullName,
-        phone: data.phone,
-        birth_date: data.birthDate,
-      })
+      .update(updateData)
       .eq("user_id", context.userId);
 
     if (error) {
