@@ -157,8 +157,8 @@ function PatientDashboard() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Header />
-      <main className="flex-1 px-4 py-8 md:py-12">
-        <div className="mx-auto max-w-6xl space-y-8">
+      <main className="flex-1 px-2 sm:px-4 py-8 md:py-12 w-full">
+        <div className="w-full max-w-[1600px] mx-auto space-y-8">
           {/* Header & Profile Section */}
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b pb-6 border-border">
             <div>

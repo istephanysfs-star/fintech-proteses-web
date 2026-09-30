@@ -195,12 +195,12 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
       {/* 2. Full-Width 3D Models Catalog Grid */}
       <div className="space-y-4 w-full">
         <div>
-          <Label className="text-base font-semibold text-foreground">Modelos disponíveis em 3D</Label>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Escolha um modelo do nosso catálogo completo — visualize em 3D e clique para selecionar.
+          <Label className="text-lg font-bold text-foreground">Modelos disponíveis em 3D</Label>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Escolha um modelo do nosso catálogo completo — clique no card para visualizar em 3D e selecionar.
           </p>
         </div>
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 w-full">
           {PROSTHESIS_MODELS.map((model) => {
             const active = selectedModel === model.id;
             return (
@@ -219,33 +219,49 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
                   }
                 }}
                 className={
-                  "group overflow-hidden rounded-lg border text-left transition-all h-full flex flex-col justify-between " +
+                  "group overflow-hidden rounded-xl border text-left transition-all duration-200 h-full flex flex-col justify-between shadow-sm hover:shadow-md " +
                   (active
-                    ? "border-primary ring-2 ring-primary/40 bg-primary/5"
-                    : "border-border hover:border-primary/60 bg-card")
+                    ? "border-primary ring-2 ring-primary bg-primary/10 dark:bg-primary/15"
+                    : "border-border hover:border-primary/60 bg-card hover:bg-accent/40")
                 }
               >
-                <Prosthesis3DPreview
-                  modelId={model.id}
-                  autoRotate={active}
-                  className="aspect-square w-full"
-                />
-                <div className="space-y-1 p-3 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between gap-1">
-                      <span className="text-xs font-bold text-foreground line-clamp-1">{model.name}</span>
-                    </div>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
-                      {model.category}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground line-clamp-2 mt-1">{model.description}</p>
-                  </div>
-                  <div className="mt-2 pt-2 border-t border-border flex items-center justify-between">
-                    <span className="text-xs font-semibold text-primary">
-                      {formatCurrency(model.basePrice)}
+                <div className="relative w-full aspect-[4/3] bg-slate-950/80 overflow-hidden">
+                  <Prosthesis3DPreview
+                    modelId={model.id}
+                    autoRotate={active}
+                    className="h-full w-full"
+                  />
+                  {active && (
+                    <span className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
+                      SELECIONADO
                     </span>
-                    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${active ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
-                      {active ? "Selecionado" : "Escolher"}
+                  )}
+                </div>
+
+                <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-wider text-primary">
+                      {model.category}
+                    </span>
+                    <h3 className="text-sm font-bold text-foreground mt-0.5 line-clamp-1">{model.name}</h3>
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-1 leading-relaxed">
+                      {model.description}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-border flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-muted-foreground uppercase block">A partir de</span>
+                      <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                        {formatCurrency(model.basePrice)}
+                      </span>
+                    </div>
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-md transition-colors ${
+                      active 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-muted text-foreground group-hover:bg-primary group-hover:text-primary-foreground'
+                    }`}>
+                      {active ? "Ativo" : "Escolher"}
                     </span>
                   </div>
                 </div>
