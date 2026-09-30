@@ -344,219 +344,216 @@ function PatientDashboard() {
             </CardContent>
           </Card>
 
-          {/* Main Dashboard Layout: Form + Applications List */}
-          <div className="grid gap-8 lg:grid-cols-12">
-            {/* Left Column: Create Proposal Form */}
-            <div className="lg:col-span-5 space-y-4">
-              <div>
-                <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                  <PlusCircle className="h-5 w-5 text-primary" />
-                  Nova Proposta de Financiamento
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Simule e solicite o financiamento de sua prótese ortopédica diretamente no Supabase.
-                </p>
-              </div>
-
-              <Card className="border-border">
-                <CardContent className="p-6">
-                  <ProposalForm
-                    onSuccess={() =>
-                      queryClient.invalidateQueries({ queryKey: ["my-loan-applications"] })
-                    }
-                  />
-                </CardContent>
-              </Card>
+          {/* Section 1: Minhas Propostas Registradas (Full Width) */}
+          <div className="space-y-4 w-full">
+            <div>
+              <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                <FileText className="h-5 w-5 text-primary" />
+                Minhas Propostas Registradas
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Consulte todos os dados gravados na tabela <code className="text-xs bg-muted px-1.5 py-0.5 rounded">loan_applications</code>.
+              </p>
             </div>
 
-            {/* Right Column: Applications List with Tabs (Fetched live from Supabase) */}
-            <div className="lg:col-span-7 space-y-4">
-              <div>
-                <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  Minhas Propostas Registradas
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Consulte todos os dados gravados na tabela <code className="text-xs bg-muted px-1.5 py-0.5 rounded">loan_applications</code>.
+            {isLoansLoading ? (
+              <Card className="border-border p-8 text-center">
+                <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Carregando suas propostas do Supabase...
                 </p>
-              </div>
+              </Card>
+            ) : (
+              <Tabs defaultValue="all" className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="all">Todas ({totalProposals})</TabsTrigger>
+                  <TabsTrigger value="pending">Análise ({pendingProposals.length})</TabsTrigger>
+                  <TabsTrigger value="approved">Aprovadas ({approvedProposals.length})</TabsTrigger>
+                  <TabsTrigger value="rejected">Recusadas ({rejectedProposals.length})</TabsTrigger>
+                </TabsList>
 
-              {isLoansLoading ? (
-                <Card className="border-border p-8 text-center">
-                  <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Carregando suas propostas do Supabase...
-                  </p>
-                </Card>
-              ) : (
-                <Tabs defaultValue="all" className="w-full">
-                  <TabsList className="grid w-full grid-cols-4">
-                    <TabsTrigger value="all">Todas ({totalProposals})</TabsTrigger>
-                    <TabsTrigger value="pending">Análise ({pendingProposals.length})</TabsTrigger>
-                    <TabsTrigger value="approved">Aprovadas ({approvedProposals.length})</TabsTrigger>
-                    <TabsTrigger value="rejected">Recusadas ({rejectedProposals.length})</TabsTrigger>
-                  </TabsList>
+                {/* Render Applications Helper */}
+                {["all", "pending", "approved", "rejected"].map((tabKey) => {
+                  const filteredList =
+                    tabKey === "all"
+                      ? applications
+                      : tabKey === "pending"
+                        ? pendingProposals
+                        : tabKey === "approved"
+                          ? approvedProposals
+                          : rejectedProposals;
 
-                  {/* Render Applications Helper */}
-                  {["all", "pending", "approved", "rejected"].map((tabKey) => {
-                    const filteredList =
-                      tabKey === "all"
-                        ? applications
-                        : tabKey === "pending"
-                          ? pendingProposals
-                          : tabKey === "approved"
-                            ? approvedProposals
-                            : rejectedProposals;
-
-                    return (
-                      <TabsContent key={tabKey} value={tabKey} className="mt-4 space-y-4">
-                        {filteredList.length === 0 ? (
-                          <Card className="border-dashed border-border p-8 text-center">
-                            <Info className="h-8 w-8 text-muted-foreground mx-auto" />
-                            <p className="mt-2 text-sm font-medium text-foreground">
-                              Nenhuma proposta encontrada nesta categoria.
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Preencha o formulário ao lado para cadastrar uma nova proposta.
-                            </p>
-                          </Card>
-                        ) : (
-                          filteredList.map((app: any) => (
-                            <Card key={app.id} className="border-border shadow-sm hover:border-primary/50 transition-colors">
-                              <CardContent className="p-6 space-y-4">
-                                {/* Application Top Info */}
-                                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
-                                  <div className="space-y-0.5">
-                                    <span className="text-xs font-mono text-muted-foreground">
-                                      ID: #{app.id.substring(0, 8)}...
-                                    </span>
-                                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                      <Calendar className="h-3.5 w-3.5" />
-                                      Solicitado em: {formatDate(app.created_at)}
-                                    </div>
-                                  </div>
-
-                                  <StatusBadge status={app.status} />
-                                </div>
-
-                                {/* Main Values Grid */}
-                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 bg-muted/30 p-3.5 rounded-lg text-sm">
-                                  <div>
-                                    <span className="text-xs text-muted-foreground block">
-                                      Valor Solicitado
-                                    </span>
-                                    <span className="font-semibold text-foreground text-base">
-                                      {formatCurrency(app.requested_amount)}
-                                    </span>
-                                  </div>
-
-                                  <div>
-                                    <span className="text-xs text-muted-foreground block">
-                                      Entrada Solicitada
-                                    </span>
-                                    <span className="font-medium text-foreground">
-                                      {formatCurrency(app.down_payment)}
-                                    </span>
-                                  </div>
-
-                                  <div>
-                                    <span className="text-xs text-muted-foreground block">
-                                      Condição Escolhida
-                                    </span>
-                                    <span className="font-medium text-foreground">
-                                      {app.installments}x de {formatCurrency(app.monthly_payment)}
-                                    </span>
-                                  </div>
-
-                                  <div>
-                                    <span className="text-xs text-muted-foreground block">
-                                      Custo Total Estimado
-                                    </span>
-                                    <span className="font-medium text-foreground">
-                                      {formatCurrency(app.total_cost)}
-                                    </span>
-                                  </div>
-
-                                  <div>
-                                    <span className="text-xs text-muted-foreground block">
-                                      Taxa de Juros
-                                    </span>
-                                    <span className="font-medium text-foreground">
-                                      {app.interest_rate}% a.m.
-                                    </span>
-                                  </div>
-
-                                  <div>
-                                    <span className="text-xs text-muted-foreground block">
-                                      Valor Financiado
-                                    </span>
-                                    <span className="font-medium text-primary">
-                                      {formatCurrency(
-                                        Math.max(0, app.requested_amount - app.down_payment),
-                                      )}
-                                    </span>
+                  return (
+                    <TabsContent key={tabKey} value={tabKey} className="mt-4 space-y-4">
+                      {filteredList.length === 0 ? (
+                        <Card className="border-dashed border-border p-8 text-center">
+                          <Info className="h-8 w-8 text-muted-foreground mx-auto" />
+                          <p className="mt-2 text-sm font-medium text-foreground">
+                            Nenhuma proposta encontrada nesta categoria.
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Preencha o formulário abaixo para cadastrar uma nova proposta.
+                          </p>
+                        </Card>
+                      ) : (
+                        filteredList.map((app: any) => (
+                          <Card key={app.id} className="border-border shadow-sm hover:border-primary/50 transition-colors">
+                            <CardContent className="p-6 space-y-4">
+                              {/* Application Top Info */}
+                              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+                                <div className="space-y-0.5">
+                                  <span className="text-xs font-mono text-muted-foreground">
+                                    ID: #{app.id.substring(0, 8)}...
+                                  </span>
+                                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                    <Calendar className="h-3.5 w-3.5" />
+                                    Solicitado em: {formatDate(app.created_at)}
                                   </div>
                                 </div>
 
-                                {/* Clinic details from Supabase Join */}
-                                <div className="space-y-1.5 text-xs border-l-2 border-primary/40 pl-3">
-                                  <div className="flex items-center gap-1.5 font-medium text-foreground">
-                                    <Building2 className="h-3.5 w-3.5 text-primary" />
-                                    Clínica Parceira:{" "}
-                                    <span className="font-semibold">
-                                      {app.clinics?.name || "Nenhuma clínica selecionada"}
+                                <StatusBadge status={app.status} />
+                              </div>
+
+                              {/* Main Values Grid */}
+                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 bg-muted/30 p-3.5 rounded-lg text-sm">
+                                <div>
+                                  <span className="text-xs text-muted-foreground block">
+                                    Valor Solicitado
+                                  </span>
+                                  <span className="font-semibold text-foreground text-base">
+                                    {formatCurrency(app.requested_amount)}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <span className="text-xs text-muted-foreground block">
+                                    Entrada Solicitada
+                                  </span>
+                                  <span className="font-medium text-foreground">
+                                    {formatCurrency(app.down_payment)}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <span className="text-xs text-muted-foreground block">
+                                    Condição Escolhida
+                                  </span>
+                                  <span className="font-medium text-foreground">
+                                    {app.installments}x de {formatCurrency(app.monthly_payment)}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <span className="text-xs text-muted-foreground block">
+                                    Custo Total Estimado
+                                  </span>
+                                  <span className="font-medium text-foreground">
+                                    {formatCurrency(app.total_cost)}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <span className="text-xs text-muted-foreground block">
+                                    Taxa de Juros
+                                  </span>
+                                  <span className="font-medium text-foreground">
+                                    {app.interest_rate}% a.m.
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <span className="text-xs text-muted-foreground block">
+                                    Valor Financiado
+                                  </span>
+                                  <span className="font-medium text-primary">
+                                    {formatCurrency(
+                                      Math.max(0, app.requested_amount - app.down_payment),
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Clinic details from Supabase Join */}
+                              <div className="space-y-1.5 text-xs border-l-2 border-primary/40 pl-3">
+                                <div className="flex items-center gap-1.5 font-medium text-foreground">
+                                  <Building2 className="h-3.5 w-3.5 text-primary" />
+                                  Clínica Parceira:{" "}
+                                  <span className="font-semibold">
+                                    {app.clinics?.name || "Nenhuma clínica selecionada"}
+                                  </span>
+                                </div>
+                                {app.clinics && (app.clinics.city || app.clinics.phone) && (
+                                  <p className="text-muted-foreground pl-5">
+                                    {[
+                                      app.clinics.city
+                                        ? `${app.clinics.city} - ${app.clinics.state || ""}`
+                                        : null,
+                                      app.clinics.phone ? `Tel: ${app.clinics.phone}` : null,
+                                      app.clinics.email ? `E-mail: ${app.clinics.email}` : null,
+                                    ]
+                                      .filter(Boolean)
+                                      .join(" • ")}
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Purpose / Observations */}
+                              {app.purpose && (
+                                <div className="text-xs text-muted-foreground bg-muted/20 p-2.5 rounded border border-border">
+                                  <span className="font-semibold text-foreground">
+                                    Finalidade / Detalhes:{" "}
+                                  </span>
+                                  {app.purpose}
+                                </div>
+                              )}
+
+                              {/* Admin / Reviewer Notes from Supabase */}
+                              {app.notes && (
+                                <div className="text-xs text-amber-800 dark:text-amber-200 bg-amber-500/10 p-2.5 rounded border border-amber-500/20">
+                                  <span className="font-semibold flex items-center gap-1">
+                                    <Info className="h-3.5 w-3.5" /> Parecer da Análise:
+                                  </span>
+                                  <p className="mt-0.5">{app.notes}</p>
+                                  {app.reviewed_at && (
+                                    <span className="block mt-1 text-[11px] opacity-75">
+                                      Avaliado em: {formatDate(app.reviewed_at)}
                                     </span>
-                                  </div>
-                                  {app.clinics && (app.clinics.city || app.clinics.phone) && (
-                                    <p className="text-muted-foreground pl-5">
-                                      {[
-                                        app.clinics.city
-                                          ? `${app.clinics.city} - ${app.clinics.state || ""}`
-                                          : null,
-                                        app.clinics.phone ? `Tel: ${app.clinics.phone}` : null,
-                                        app.clinics.email ? `E-mail: ${app.clinics.email}` : null,
-                                      ]
-                                        .filter(Boolean)
-                                        .join(" • ")}
-                                    </p>
                                   )}
                                 </div>
+                              )}
+                            </CardContent>
+                            <PatientApplicationExtras app={app} />
+                          </Card>
+                        ))
+                      )}
+                    </TabsContent>
+                  );
+                })}
+              </Tabs>
+            )}
+          </div>
 
-                                {/* Purpose / Observations */}
-                                {app.purpose && (
-                                  <div className="text-xs text-muted-foreground bg-muted/20 p-2.5 rounded border border-border">
-                                    <span className="font-semibold text-foreground">
-                                      Finalidade / Detalhes:{" "}
-                                    </span>
-                                    {app.purpose}
-                                  </div>
-                                )}
-
-                                {/* Admin / Reviewer Notes from Supabase */}
-                                {app.notes && (
-                                  <div className="text-xs text-amber-800 dark:text-amber-200 bg-amber-500/10 p-2.5 rounded border border-amber-500/20">
-                                    <span className="font-semibold flex items-center gap-1">
-                                      <Info className="h-3.5 w-3.5" /> Parecer da Análise:
-                                    </span>
-                                    <p className="mt-0.5">{app.notes}</p>
-                                    {app.reviewed_at && (
-                                      <span className="block mt-1 text-[11px] opacity-75">
-                                        Avaliado em: {formatDate(app.reviewed_at)}
-                                      </span>
-                                    )}
-                                  </div>
-                                )}
-                              </CardContent>
-                              <PatientApplicationExtras app={app} />
-                            </Card>
-                          ))
-                        )}
-                      </TabsContent>
-                    );
-                  })}
-                </Tabs>
-              )}
+          {/* Section 2: Nova Proposta & Catálogo 3D (Preenche a Tela Toda - Full Width) */}
+          <div className="space-y-4 w-full pt-6 border-t border-border">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                <PlusCircle className="h-6 w-6 text-primary" />
+                Nova Proposta de Financiamento & Catálogo 3D
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Configure os valores, escolha uma clínica parceira e selecione um modelo 3D do nosso catálogo completo ocupando toda a largura da tela.
+              </p>
             </div>
+
+            <Card className="border-border w-full shadow-md">
+              <CardContent className="p-6 md:p-8">
+                <ProposalForm
+                  onSuccess={() =>
+                    queryClient.invalidateQueries({ queryKey: ["my-loan-applications"] })
+                  }
+                />
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>

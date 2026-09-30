@@ -107,8 +107,9 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
-      <div className="mx-auto max-w-3xl space-y-6">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
+      {/* 1. Configuration Sliders & Selects Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 border-b border-border pb-6">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label>Valor do tratamento</Label>
@@ -180,25 +181,26 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
           </Select>
         </div>
 
-        <div>
+        <div className="md:col-span-2">
           <Label htmlFor="purpose">Finalidade / observação</Label>
           <Input
             id="purpose"
-            placeholder="Ex: prótese de quadril"
+            placeholder="Ex: prótese de quadril para reabilitação"
             className="mt-1.5"
             {...form.register("purpose")}
           />
         </div>
       </div>
 
-      <div className="space-y-3">
+      {/* 2. Full-Width 3D Models Catalog Grid */}
+      <div className="space-y-4 w-full">
         <div>
-          <Label>Modelos disponíveis</Label>
+          <Label className="text-base font-semibold text-foreground">Modelos disponíveis em 3D</Label>
           <p className="mt-1 text-xs text-muted-foreground">
-            Escolha um modelo existente do nosso catálogo — visualize em 3D antes de solicitar.
+            Escolha um modelo do nosso catálogo completo — visualize em 3D e clique para selecionar.
           </p>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full">
           {PROSTHESIS_MODELS.map((model) => {
             const active = selectedModel === model.id;
             return (
@@ -217,10 +219,10 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
                   }
                 }}
                 className={
-                  "group overflow-hidden rounded-lg border text-left transition-all " +
+                  "group overflow-hidden rounded-lg border text-left transition-all h-full flex flex-col justify-between " +
                   (active
-                    ? "border-primary ring-2 ring-primary/40"
-                    : "border-border hover:border-primary/60")
+                    ? "border-primary ring-2 ring-primary/40 bg-primary/5"
+                    : "border-border hover:border-primary/60 bg-card")
                 }
               >
                 <Prosthesis3DPreview
@@ -228,17 +230,24 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
                   autoRotate={active}
                   className="aspect-square w-full"
                 />
-                <div className="space-y-1 p-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-semibold text-foreground">{model.name}</span>
-                    <span className="text-xs font-medium text-primary">
+                <div className="space-y-1 p-3 flex-1 flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-xs font-bold text-foreground line-clamp-1">{model.name}</span>
+                    </div>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-0.5">
+                      {model.category}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground line-clamp-2 mt-1">{model.description}</p>
+                  </div>
+                  <div className="mt-2 pt-2 border-t border-border flex items-center justify-between">
+                    <span className="text-xs font-semibold text-primary">
                       {formatCurrency(model.basePrice)}
                     </span>
+                    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${active ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                      {active ? "Selecionado" : "Escolher"}
+                    </span>
                   </div>
-                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                    {model.category}
-                  </p>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{model.description}</p>
                 </div>
               </button>
             );
@@ -246,11 +255,11 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
         </div>
       </div>
 
-
-      <div className="mx-auto max-w-3xl space-y-6">
-        <Card className="bg-background/50">
+      {/* 3. Summary & Submit Button */}
+      <div className="space-y-4 border-t border-border pt-6">
+        <Card className="bg-muted/30">
           <CardContent className="p-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-xs text-muted-foreground">Parcela mensal</p>
                 <p className="text-2xl font-bold text-foreground">{formatCurrency(monthlyPayment)}</p>
@@ -259,17 +268,23 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
                 <p className="text-xs text-muted-foreground">Total estimado</p>
                 <p className="text-xl font-semibold text-foreground">{formatCurrency(totalCost)}</p>
               </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Valor a financiar</p>
+                <p className="text-xl font-semibold text-primary">{formatCurrency(financedAmount)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Taxa de juros</p>
+                <p className="text-sm font-medium text-foreground">{interestRate}% ao mês</p>
+              </div>
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Taxa de {interestRate}% ao mês
-            </p>
           </CardContent>
         </Card>
 
-        <Button type="submit" className="w-full">
-          Enviar proposta
+        <Button type="submit" size="lg" className="w-full text-base font-semibold">
+          Enviar Proposta de Financiamento
         </Button>
       </div>
     </form>
   );
+}
 }
