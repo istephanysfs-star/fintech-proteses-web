@@ -287,4 +287,3 @@ export function ProposalForm({ onSuccess }: ProposalFormProps) {
     </form>
   );
 }
-}
